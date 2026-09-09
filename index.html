@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Vánoční Beyblade Aréna</title>
+<title>STARÝ PUŠKY — Beyblade Aréna</title>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Bungee&family=Rubik:wght@400;500;600;700;800&display=swap');
 
@@ -257,21 +257,77 @@ table.h2h .pb{ font-size:10px; color:var(--text-dim); font-weight:400; }
 .legend span{ display:inline-flex; align-items:center; gap:6px; }
 .legend i{ width:12px;height:12px;border-radius:3px;display:inline-block; }
 footer{ text-align:center; color:var(--text-dim); font-size:12px; padding:20px; }
+
+/* ===== STARÝ PUŠKY OVERDRIVE THEME ===== */
+:root{
+  --bg:#03050a; --bg2:#070b13; --panel:#0a101b; --panel2:#0e1725;
+  --line:#26344d; --orange:#ff3b16; --red:#ff1744; --ice:#16d9ff;
+  --gold:#ffd21f; --green:#36f58b; --text:#f7f9ff; --text-dim:#8291ab;
+  --fire:#ff5a1f; --violet:#8b5cff;
+}
+body{
+  background:
+    radial-gradient(circle at 12% 8%, rgba(255,59,22,.18), transparent 30%),
+    radial-gradient(circle at 88% 12%, rgba(22,217,255,.14), transparent 28%),
+    radial-gradient(circle at 50% 65%, rgba(139,92,255,.08), transparent 35%),
+    repeating-linear-gradient(115deg,rgba(255,255,255,.018) 0 2px,transparent 2px 12px),var(--bg);
+}
+body:before{content:"";position:fixed;inset:0;pointer-events:none;z-index:-1;background:linear-gradient(transparent 49%,rgba(255,23,68,.035) 50%,transparent 51%);background-size:100% 8px;}
+.hero{padding:26px 20px 24px;border-bottom:4px solid var(--red);background:radial-gradient(circle at 25% 50%,rgba(255,59,22,.22),transparent 30%),radial-gradient(circle at 75% 50%,rgba(22,217,255,.2),transparent 30%),linear-gradient(180deg,#070b14,#02040a);overflow:hidden;}
+.hero:before,.hero:after{content:"🌀";position:absolute;font-size:180px;line-height:1;opacity:.08;filter:blur(1px);animation:spin 7s linear infinite;top:-30px;}
+.hero:before{left:-25px;color:var(--fire)} .hero:after{right:-25px;color:var(--ice);animation-direction:reverse}
+.hero .top-spin{width:128px;height:128px;background:conic-gradient(var(--red),var(--gold),var(--orange),var(--ice),var(--violet),var(--red));border:5px solid #fff;box-shadow:0 0 0 8px #080c16,0 0 18px rgba(255,59,22,.8),0 0 55px rgba(22,217,255,.35);}
+.hero h1{font-size:clamp(34px,8vw,68px);color:#fff;text-shadow:4px 4px 0 var(--red),-3px -3px 0 var(--ice),0 0 22px rgba(255,255,255,.25);letter-spacing:2px;transform:skew(-4deg);}
+.hero h1 .puppy{color:var(--gold);}
+.hero p{color:#c9d4e8;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;}
+.hero .crew-tag{display:inline-block;margin-top:12px;padding:7px 14px;border:2px solid var(--gold);border-radius:999px;background:rgba(255,210,31,.08);color:var(--gold);font-family:'Bungee',cursive;font-size:12px;box-shadow:0 0 18px rgba(255,210,31,.15);}
+nav.tabs{background:rgba(3,5,10,.92);border-bottom:2px solid #172238;backdrop-filter:blur(12px);}
+nav.tabs button{background:linear-gradient(180deg,#101a2b,#070c15);border-color:#2b3a55;border-radius:9px;text-transform:uppercase;box-shadow:inset 0 0 0 1px rgba(255,255,255,.03);}
+nav.tabs button.active{background:linear-gradient(135deg,#ff4b18,#d70035);border-color:var(--gold);box-shadow:0 0 18px rgba(255,23,68,.35),0 4px 14px rgba(255,59,22,.25);}
+.panel{background:linear-gradient(145deg,rgba(14,23,37,.96),rgba(5,9,16,.98));border-color:#243653;border-radius:12px;box-shadow:0 14px 35px rgba(0,0,0,.35),inset 0 1px 0 rgba(255,255,255,.035);position:relative;overflow:hidden;}
+.panel:before{content:"";position:absolute;left:0;top:0;width:34%;height:3px;background:linear-gradient(90deg,var(--red),var(--gold),transparent);}
+.panel h2{color:var(--gold);text-transform:uppercase;text-shadow:0 0 12px rgba(255,210,31,.18);}
+.player-card{background:linear-gradient(145deg,#101b2b,#070c14);border-color:#2c3d5b;box-shadow:0 8px 18px rgba(0,0,0,.3);transition:.18s;}
+.player-card:hover{transform:translateY(-4px) rotate(-.4deg);border-color:var(--red);box-shadow:0 12px 25px rgba(255,23,68,.15);}
+.player-photo{border-color:var(--gold);box-shadow:0 0 18px rgba(255,210,31,.18);}
+.player-card .blade-badge{display:inline-flex;align-items:center;gap:6px;margin-top:8px;padding:4px 8px;border-radius:999px;background:#070c14;border:1px solid #33445f;color:#dce7f7;font-size:11px;font-weight:800;}
+.blade-mini{width:32px;height:32px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;background:conic-gradient(var(--red),var(--gold),var(--ice),var(--violet),var(--red));border:2px solid #fff;box-shadow:0 0 12px rgba(22,217,255,.25);font-size:17px;animation:spin 4s linear infinite;}
+.player-card .protect{display:block;margin-top:8px;font-size:10px;color:var(--green);font-weight:800;letter-spacing:.4px;}
+.player-card .del{color:#ff526f;background:#160812;border-radius:50%;width:24px;height:24px;line-height:20px;}
+.btn{background:linear-gradient(135deg,#ff4b18,#e0003b);box-shadow:0 3px 0 #8f0c2c,0 0 16px rgba(255,59,22,.14);}
+.btn.ice{background:linear-gradient(135deg,#0b9fd0,#18e0ff);}
+.btn.gold{background:linear-gradient(135deg,#c99300,#ffd21f);}
+.btn.green{background:linear-gradient(135deg,#159c5a,#36f58b);}
+.match,.bmatch,.award{background:linear-gradient(145deg,#101a29,#080e18);border-color:#2b3c58;}
+.match .vs,.vs{color:var(--gold);font-family:'Bungee',cursive;}
+.round-title{color:var(--red);text-shadow:0 0 12px rgba(255,23,68,.25);}
+.wheel{border-color:#fff;background:conic-gradient(var(--red),var(--orange),var(--gold),var(--ice),var(--violet),var(--red));box-shadow:0 0 0 6px #111827,0 0 45px rgba(255,23,68,.4),0 0 70px rgba(22,217,255,.2);}
+.wheel-inner{background:radial-gradient(circle,#151f31,#05080e);border:2px solid #31415d;}
+footer{color:#6f7e96;text-transform:uppercase;letter-spacing:1px;}
+.arena-strip{display:flex;align-items:center;justify-content:center;gap:18px;margin:0 auto 18px;max-width:980px;padding:10px 16px;border:1px solid #263753;border-radius:999px;background:rgba(7,12,20,.82);box-shadow:0 0 25px rgba(0,0,0,.3);font-weight:900;text-transform:uppercase;font-size:12px;letter-spacing:1px;}
+.arena-strip .blade-mini{width:28px;height:28px;flex:none;}
+.versus-line{display:flex;align-items:center;justify-content:center;gap:12px;color:#fff;font-family:'Bungee',cursive;font-size:12px;margin:10px 0;}
+.versus-line b{color:var(--red);font-size:18px;text-shadow:0 0 10px rgba(255,23,68,.5);}
+.pin-note{margin-top:8px;padding:9px 12px;border:1px dashed #3a4c69;border-radius:9px;color:#aebbd0;background:rgba(255,255,255,.025);font-size:11px;}
+@media(max-width:650px){.hero .top-spin{width:92px;height:92px}.hero h1{font-size:34px}.arena-strip{border-radius:10px}.panel{padding:15px}.player-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}}
+
 </style>
 </head>
 <body>
 
 <div class="hero snow-wrap" id="snowWrap">
   <div class="top-spin"></div>
-  <h1>VÁNOČNÍ<br>BEYBLADE ARÉNA</h1>
-  <p>Let it rip, ne let it grinch. Deset bojovníků, dva bláznivé turnaje, jeden vánoční vítěz.</p>
+  <h1><span class="puppy">STARÝ PUŠKY</span><br>BEYBLADE ARÉNA</h1>
+  <p>SPIN. SMASH. REPEAT. Jedna aréna, jeden vítěz a parta Starých Pušek.</p>
+  <div class="crew-tag">🔥 TOČÍME • BOJUJEME • SÁZÍME • ŽIJEME 🔥</div>
 </div>
+<div class="arena-strip"><span class="blade-mini">🌀</span> STARÝ PUŠKY • LET IT RIP! <span class="blade-mini">🌀</span></div>
 
 <nav class="tabs">
-  <button data-tab="players" class="active">🧑‍🎄 Hráči</button>
-  <button data-tab="t1">🏆 Liga + pavouk</button>
-  <button data-tab="t2">🥃 Vánoční panák-beyblade</button>
-  <button data-tab="stats">📊 Statistiky</button>
+  <button data-tab="players" class="active">🌀 Bojovníci</button>
+  <button data-tab="t1">⚔️ Aréna</button>
+  <button data-tab="t2">💀 Panák-Beyblade</button>
+  <button data-tab="stats">🏆 Síň slávy</button>
 </nav>
 
 <main>
@@ -279,13 +335,15 @@ footer{ text-align:center; color:var(--text-dim); font-size:12px; padding:20px; 
   <!-- PLAYERS TAB -->
   <section id="tab-players" class="tab-content">
     <div class="panel">
-      <h2>Bojovníci Arény</h2>
-      <p class="sub">Každý si zadá jméno a může nahrát fotku svého beyblade. Klidně přidejte všech 10 (nebo víc, kdo dorazí navíc).</p>
+      <h2>🔥 Bojovníci Starých Pušek</h2>
+      <p class="sub">Každý bojovník má svého Beyblade. Svého si může upravovat jen on — ostatním do něj ruce necpeme.</p>
       <div id="playerGrid" class="player-grid"></div>
+      <div class="pin-note">🔒 <b>Ochrana Beyblade:</b> při přidání si každý nastaví 4místný PIN. Bez správného PINu nejde změnit fotku ani mazat hráče/Beyblade. Tohle je ochrana proti kamarádskému trollení, ne bankovní zabezpečení.</div>
       <div class="add-player-row">
         <input type="text" id="newPlayerName" placeholder="Jméno hráče...">
-        <input type="text" id="newPlayerBlade" placeholder="Název beyblade (nepovinné)...">
-        <button class="btn" id="addPlayerBtn">+ Přidat hráče</button>
+        <input type="text" id="newPlayerBlade" placeholder="Název Beyblade (nepovinné)...">
+        <input type="password" id="newPlayerPin" inputmode="numeric" maxlength="4" placeholder="PIN 4 čísla">
+        <button class="btn" id="addPlayerBtn">+ Přidat bojovníka</button>
       </div>
     </div>
   </section>
@@ -369,7 +427,7 @@ footer{ text-align:center; color:var(--text-dim); font-size:12px; padding:20px; 
   </section>
 
 </main>
-<footer>Sestrojeno v tajné dílně skřítků · Let it rip! 🎄</footer>
+<footer>Sestrojeno v tajné dílně Starých Pušek · SPIN • SMASH • REPEAT 🌀🔥</footer>
 
 <script>
 /* ---------------- utilities ---------------- */
@@ -410,6 +468,7 @@ function normalizeState(){
   if(!state.t1) state.t1 = { schedule: [], playoff: null };
   if(!state.t2) state.t2 = { stakes: DEFAULT_STAKES.slice(), log: [] };
   if(!state.players) state.players = [];
+  state.players.forEach(p=>{ if(p.pin===undefined) p.pin=null; });
   if(!Array.isArray(state.t1.schedule)) state.t1.schedule = [];
   if(!Array.isArray(state.t2.stakes)) state.t2.stakes = DEFAULT_STAKES.slice();
   if(!Array.isArray(state.t2.log)) state.t2.log = [];
@@ -507,46 +566,62 @@ document.querySelectorAll('nav.tabs button').forEach(btn=>{
 })();
 
 /* ---------------- players ---------------- */
+function verifyOwner(p, action){
+  if(!p) return false;
+  if(!p.pin){
+    const created = prompt(`Ochrana pro ${p.name} ještě není nastavená. Vymysli 4místný PIN:`);
+    if(!/^\d{4}$/.test(created||'')){ alert('PIN musí mít přesně 4 čísla.'); return false; }
+    p.pin = created; save();
+    alert('PIN nastaven. Zapamatuj si ho — bez něj nepůjde Beyblade upravovat.');
+    return true;
+  }
+  const entered = prompt(`PIN pro ${p.name} — ${action}:`);
+  if(entered !== p.pin){ alert('Špatný PIN. Tohle je cizí Beyblade. 😈'); return false; }
+  return true;
+}
 function renderPlayers(){
   const grid = document.getElementById('playerGrid');
   if(state.players.length===0){
-    grid.innerHTML = '<div class="empty">Zatím žádní bojovníci. Zadej jméno níže!</div>';
+    grid.innerHTML = '<div class="empty">Zatím žádní bojovníci. Přidej první Starou Pušku dole! 🌀</div>';
     return;
   }
   grid.innerHTML = state.players.map(p=>`
     <div class="player-card">
-      <button class="del" data-del="${p.id}" title="Odebrat">×</button>
+      <button class="del" data-del="${p.id}" title="Smazat hráče (vyžaduje PIN)">×</button>
       ${p.photo ? `<img class="player-photo" src="${p.photo}">` : `<div class="player-photo placeholder">🌀</div>`}
       <div class="pname">${esc(p.name)}</div>
-      ${p.blade ? `<div style="font-size:11px;color:var(--text-dim);margin-top:-4px;">${esc(p.blade)}</div>` : ''}
-      <label class="up">Nahrát beyblade
+      ${p.blade ? `<div class="blade-badge"><span class="blade-mini">🌀</span>${esc(p.blade)}</div>` : `<div class="blade-badge"><span class="blade-mini">🌀</span>BEYBLADE BEZE JMÉNA</div>`}
+      <label class="up">⚡ Změnit svůj Beyblade
         <input type="file" accept="image/*" data-photo="${p.id}" style="display:none">
       </label>
+      <span class="protect">🔒 CHRÁNĚNO PINEM</span>
     </div>
   `).join('');
   grid.querySelectorAll('[data-del]').forEach(b=>b.addEventListener('click', ()=>{
-    if(confirm('Opravdu odebrat hráče?')){
-      state.players = state.players.filter(p=>p.id!==b.dataset.del);
+    const p = player(b.dataset.del);
+    if(!p || !verifyOwner(p,'smazání hráče')) return;
+    if(confirm(`Opravdu smazat ${p.name} z Arény?`)){
+      state.players = state.players.filter(x=>x.id!==p.id);
       save(); renderAll();
     }
   }));
   grid.querySelectorAll('[data-photo]').forEach(inp=>inp.addEventListener('change', e=>{
     const file = e.target.files[0];
     if(!file) return;
+    const p = player(inp.dataset.photo);
+    if(!p || !verifyOwner(p,'změna fotky Beyblade')) { inp.value=''; return; }
     const reader = new FileReader();
     reader.onload = ev=>{
       const img = new Image();
       img.onload = ()=>{
-        const size = 160;
-        const c = document.createElement('canvas');
-        c.width=size; c.height=size;
+        const size = 220;
+        const c = document.createElement('canvas'); c.width=size; c.height=size;
         const ctx = c.getContext('2d');
         const scale = Math.max(size/img.width, size/img.height);
         const w = img.width*scale, h = img.height*scale;
         ctx.drawImage(img, (size-w)/2, (size-h)/2, w, h);
-        const dataUrl = c.toDataURL('image/jpeg', .82);
-        const p = player(inp.dataset.photo);
-        if(p){ p.photo = dataUrl; save(); renderAll(); }
+        p.photo = c.toDataURL('image/jpeg', .82);
+        save(); renderAll();
       };
       img.src = ev.target.result;
     };
@@ -556,15 +631,18 @@ function renderPlayers(){
 document.getElementById('addPlayerBtn').addEventListener('click', addPlayer);
 document.getElementById('newPlayerName').addEventListener('keydown', e=>{ if(e.key==='Enter') addPlayer(); });
 document.getElementById('newPlayerBlade').addEventListener('keydown', e=>{ if(e.key==='Enter') addPlayer(); });
+document.getElementById('newPlayerPin').addEventListener('keydown', e=>{ if(e.key==='Enter') addPlayer(); });
 function addPlayer(){
   const inp = document.getElementById('newPlayerName');
   const bladeInp = document.getElementById('newPlayerBlade');
   const name = inp.value.trim();
   const blade = bladeInp.value.trim();
+  const pin = document.getElementById('newPlayerPin').value.trim();
   if(!name) return;
+  if(!/^\d{4}$/.test(pin)){ alert('Nastav prosím přesně 4místný PIN.'); return; }
   if(state.players.some(p=>p.name.toLowerCase()===name.toLowerCase())){ alert('Tohle jméno už je v aréně zabrané.'); return; }
-  state.players.push({ id:uid(), name, blade, photo:null });
-  inp.value=''; bladeInp.value='';
+  state.players.push({ id:uid(), name, blade, photo:null, pin });
+  inp.value=''; bladeInp.value=''; document.getElementById('newPlayerPin').value='';
   save(); renderAll();
 }
 
