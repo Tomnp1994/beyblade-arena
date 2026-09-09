@@ -324,6 +324,56 @@ footer{color:#6f7e96;text-transform:uppercase;letter-spacing:1px;}
 .danger{border-color:#ff3658!important;color:#fff!important;background:linear-gradient(135deg,#8d1028,#ef2346)!important;}
 @media(max-width:600px){.backup-item{align-items:flex-start;flex-direction:column}.backup-buttons{width:100%}.backup-buttons .btn{flex:1}}
 
+.management-hero{
+  border-color:rgba(255,210,31,.45);
+  background:
+    radial-gradient(circle at 90% 0%,rgba(22,217,255,.12),transparent 28%),
+    radial-gradient(circle at 0% 100%,rgba(255,23,68,.12),transparent 32%),
+    linear-gradient(145deg,#101827,#05080e);
+}
+.manage-kicker{
+  display:inline-block;
+  margin-bottom:8px;
+  color:var(--red);
+  font-family:'Bungee',cursive;
+  font-size:11px;
+  letter-spacing:1px;
+}
+.management-hero h2{
+  font-size:clamp(24px,5vw,36px);
+  margin-bottom:5px;
+}
+.manage-warning{
+  display:flex;
+  align-items:flex-start;
+  gap:12px;
+  margin:18px 0;
+  padding:14px;
+  border:1px solid rgba(255,59,92,.45);
+  border-radius:12px;
+  background:rgba(255,23,68,.07);
+}
+.manage-warning-icon{font-size:25px;line-height:1}
+.manage-warning b{display:block;color:#fff;margin-bottom:3px}
+.manage-warning span{display:block;color:#aebbd0;font-size:12px;line-height:1.45}
+.management-actions{margin-top:10px}
+.backup-title-row{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:10px;
+  margin-top:24px;
+  margin-bottom:8px;
+}
+.backup-title-row h3{margin:0;color:var(--ice);font-size:16px}
+.backup-count{
+  color:var(--text-dim);
+  font-size:11px;
+  border:1px solid var(--line);
+  border-radius:999px;
+  padding:5px 9px;
+}
+
 </style>
 </head>
 <body>
@@ -341,6 +391,7 @@ footer{color:#6f7e96;text-transform:uppercase;letter-spacing:1px;}
   <button data-tab="t1">⚔️ Aréna</button>
   <button data-tab="t2">💀 Panák-Beyblade</button>
   <button data-tab="stats">🏆 Síň slávy</button>
+  <button data-tab="manage">⚙️ Správa</button>
 </nav>
 
 <main>
@@ -366,15 +417,6 @@ footer{color:#6f7e96;text-transform:uppercase;letter-spacing:1px;}
     <div class="panel">
       <h2>Fáze 1 — Každý s každým</h2>
       <p class="sub">Rozpis je poskládaný tak, aby žádný hráč neměl 3 zápasy za sebou v řadě. Klikněte na vítěze každého zápasu.</p>
-      <div class="panel backup-panel">
-        <h2>💾 Zálohy výsledků &amp; reset</h2>
-        <p class="sub">Před vynulováním si ulož výsledky. Reset smaže výsledky ligy, pavouka a Panák-Beyblade, ale hráči, Beyblady a seznam sázek zůstanou.</p>
-        <div class="backup-actions">
-          <button class="btn gold" id="backupBtn">💾 Zálohovat výsledky</button>
-          <button class="btn danger" id="resetBtn">☢️ Vynulovat výsledky</button>
-        </div>
-        <div id="backupList" class="backup-list"></div>
-      </div>
       <div id="rrControls"></div>
       <div id="rrMatches"></div>
     </div>
@@ -414,6 +456,35 @@ footer{color:#6f7e96;text-transform:uppercase;letter-spacing:1px;}
     <div class="panel">
       <h2>Historie soubojů</h2>
       <div id="t2Log"></div>
+    </div>
+  </section>
+
+
+  <!-- MANAGEMENT TAB -->
+  <section id="tab-manage" class="tab-content hidden">
+    <div class="panel management-hero">
+      <div class="manage-kicker">⚙️ STARÝ PUŠKY CONTROL ROOM</div>
+      <h2>Správa turnaje</h2>
+      <p class="sub">Tady máš všechno pro zálohy a nový start turnaje. Výsledky může zapisovat každý, ale reset je schválně schovaný tady.</p>
+
+      <div class="manage-warning">
+        <div class="manage-warning-icon">☢️</div>
+        <div>
+          <b>Vynulování výsledků</b>
+          <span>Hráči, Beyblady a seznam sázek zůstanou. Vynulují se výsledky ligy, pavouk a Panák-Beyblade.</span>
+        </div>
+      </div>
+
+      <div class="backup-actions management-actions">
+        <button class="btn gold" id="backupBtn">💾 Vytvořit zálohu</button>
+        <button class="btn danger" id="resetBtn">☢️ Vynulovat výsledky</button>
+      </div>
+
+      <div class="backup-title-row">
+        <h3>💾 Uložené zálohy</h3>
+        <span class="backup-count" id="backupCount">0 záloh</span>
+      </div>
+      <div id="backupList" class="backup-list"></div>
     </div>
   </section>
 
@@ -608,7 +679,7 @@ function resetResults(){
     !!(state.t1.playoff && state.t1.playoff.rounds && state.t1.playoff.rounds.some(r=>r.some(m=>m.winner))) ||
     state.t2.log.length>0;
   if(!hasResults){ alert('Není co vynulovat — zatím nejsou zapsané žádné výsledky.'); return; }
-  const label = prompt('Název zálohy před resetem:', 'Před resetem ' + new Date().toLocaleString('cs-CZ'));
+  const label = prompt('Nejdřív vytvoříme zálohu. Zadej její název:', 'Před resetem ' + new Date().toLocaleString('cs-CZ'));
   if(label===null) return;
   makeBackup(label.trim() || ('Před resetem ' + new Date().toLocaleString('cs-CZ')));
   state.t1.schedule.forEach(m=>m.winner=null);
@@ -621,8 +692,10 @@ function resetResults(){
 function renderBackups(){
   const el = document.getElementById('backupList');
   if(!el) return;
+  const countEl = document.getElementById('backupCount');
+  if(countEl) countEl.textContent = `${state.backups.length} ${state.backups.length===1?'záloha':'zálohy'}`;
   if(!state.backups.length){
-    el.innerHTML = '<div class="empty">Zatím žádné zálohy. Před velkým resetem si jednu vytvoř. 💾</div>';
+    el.innerHTML = '<div class="empty">Zatím žádné zálohy. Klikni na „Vytvořit zálohu“ a uložíme aktuální výsledky. 💾</div>';
     return;
   }
   el.innerHTML = state.backups.map(b=>`
@@ -644,7 +717,7 @@ document.getElementById('backupBtn').addEventListener('click',()=>{
   const label = prompt('Název zálohy:', 'Záloha ' + new Date().toLocaleString('cs-CZ'));
   if(label===null) return;
   makeBackup(label.trim() || ('Záloha ' + new Date().toLocaleString('cs-CZ')));
-  alert('Výsledky jsou zálohované. 💾');
+  alert('Výsledky jsou zálohované do společné databáze. 💾');
 });
 document.getElementById('resetBtn').addEventListener('click',resetResults);
 
@@ -657,6 +730,7 @@ document.querySelectorAll('nav.tabs button').forEach(btn=>{
     document.getElementById('tab-'+btn.dataset.tab).classList.remove('hidden');
     if(btn.dataset.tab==='stats') renderStats();
     if(btn.dataset.tab==='t2') renderT2();
+    if(btn.dataset.tab==='manage') renderBackups();
   });
 });
 
@@ -1180,3 +1254,4 @@ setInterval(refreshSharedState, 3000);
 </script>
 </body>
 </html>
+
