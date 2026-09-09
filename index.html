@@ -465,7 +465,7 @@ footer{color:#6f7e96;text-transform:uppercase;letter-spacing:1px;}
     <div class="panel management-hero">
       <div class="manage-kicker">⚙️ STARÝ PUŠKY CONTROL ROOM</div>
       <h2>Správa turnaje</h2>
-      <p class="sub">Tady máš všechno pro zálohy a nový start turnaje. Výsledky může zapisovat každý, ale reset je schválně schovaný tady.</p>
+      <p class="sub">Tady máš všechno pro zálohy a nový start turnaje. Výsledky může zapisovat každý, ale reset je schválně schovaný tady.</p><div class="pin-note">☁️ <b>Zálohy jsou uložené v Supabase, ne v prohlížeči.</b> Aktualizace stránky nebo nahrání nového index.html je nemaže.</div>
 
       <div class="manage-warning">
         <div class="manage-warning-icon">☢️</div>
@@ -641,7 +641,7 @@ function cloneResultState(){
     panakLog: state.t2.log.map(l=>JSON.parse(JSON.stringify(l)))
   };
 }
-function makeBackup(label){
+async function makeBackup(label){
   normalizeState();
   const backup = {
     id: uid(),
@@ -651,43 +651,43 @@ function makeBackup(label){
   };
   state.backups.unshift(backup);
   if(state.backups.length>20) state.backups = state.backups.slice(0,20);
-  save();
   renderBackups();
+  await writeState(); // záloha se zapíše ihned do Supabase
   return backup;
 }
-function restoreBackup(id){
+async function restoreBackup(id){
   const b = state.backups.find(x=>x.id===id);
   if(!b || !b.data) return;
   if(!confirm(`Obnovit zálohu „${b.name}“? Aktuální výsledky budou nahrazeny výsledky ze zálohy.`)) return;
   state.t1.schedule = (b.data.schedule||[]).map(m=>({...m}));
   state.t1.playoff = b.data.playoff ? JSON.parse(JSON.stringify(b.data.playoff)) : null;
   state.t2.log = (b.data.panakLog||[]).map(l=>JSON.parse(JSON.stringify(l)));
-  save();
   renderAll();
+  await writeState(); // obnova se zapíše ihned do Supabase
   alert('Záloha obnovena. 🌀');
 }
-function deleteBackup(id){
+async function deleteBackup(id){
   const b = state.backups.find(x=>x.id===id);
   if(!b) return;
   if(!confirm(`Opravdu smazat zálohu „${b.name}“? Tohle nejde vrátit.`)) return;
   state.backups = state.backups.filter(x=>x.id!==id);
-  save();
   renderBackups();
+  await writeState(); // smazání zálohy se zapíše ihned do Supabase
 }
-function resetResults(){
+async function resetResults(){
   const hasResults = state.t1.schedule.some(m=>m.winner) ||
     !!(state.t1.playoff && state.t1.playoff.rounds && state.t1.playoff.rounds.some(r=>r.some(m=>m.winner))) ||
     state.t2.log.length>0;
   if(!hasResults){ alert('Není co vynulovat — zatím nejsou zapsané žádné výsledky.'); return; }
   const label = prompt('Nejdřív vytvoříme zálohu. Zadej její název:', 'Před resetem ' + new Date().toLocaleString('cs-CZ'));
   if(label===null) return;
-  makeBackup(label.trim() || ('Před resetem ' + new Date().toLocaleString('cs-CZ')));
+  await makeBackup(label.trim() || ('Před resetem ' + new Date().toLocaleString('cs-CZ')));
   state.t1.schedule.forEach(m=>m.winner=null);
   state.t1.playoff = null;
   state.t2.log = [];
-  save();
   renderAll();
-  alert('Výsledky jsou vynulované. Záloha zůstala uložená. 🔥');
+  await writeState(); // reset + záloha jsou oba ihned uložené
+  alert('Výsledky jsou vynulované. Záloha zůstala uložená v Supabase. 🔥');
 }
 function renderBackups(){
   const el = document.getElementById('backupList');
@@ -713,11 +713,11 @@ function renderBackups(){
   el.querySelectorAll('[data-delete-backup]').forEach(btn=>btn.addEventListener('click',()=>deleteBackup(btn.dataset.deleteBackup)));
 }
 
-document.getElementById('backupBtn').addEventListener('click',()=>{
+document.getElementById('backupBtn').addEventListener('click',async ()=>{
   const label = prompt('Název zálohy:', 'Záloha ' + new Date().toLocaleString('cs-CZ'));
   if(label===null) return;
-  makeBackup(label.trim() || ('Záloha ' + new Date().toLocaleString('cs-CZ')));
-  alert('Výsledky jsou zálohované do společné databáze. 💾');
+  await makeBackup(label.trim() || ('Záloha ' + new Date().toLocaleString('cs-CZ')));
+  alert('Výsledky jsou bezpečně uložené v Supabase. 💾');
 });
 document.getElementById('resetBtn').addEventListener('click',resetResults);
 
@@ -1254,4 +1254,3 @@ setInterval(refreshSharedState, 3000);
 </script>
 </body>
 </html>
-
