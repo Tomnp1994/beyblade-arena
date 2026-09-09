@@ -311,6 +311,19 @@ footer{color:#6f7e96;text-transform:uppercase;letter-spacing:1px;}
 .pin-note{margin-top:8px;padding:9px 12px;border:1px dashed #3a4c69;border-radius:9px;color:#aebbd0;background:rgba(255,255,255,.025);font-size:11px;}
 @media(max-width:650px){.hero .top-spin{width:92px;height:92px}.hero h1{font-size:34px}.arena-strip{border-radius:10px}.panel{padding:15px}.player-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}}
 
+
+/* ---------------- backups / reset ---------------- */
+.backup-panel{border:1px solid rgba(255,59,92,.55);background:linear-gradient(135deg,rgba(255,32,64,.08),rgba(0,0,0,.18));}
+.backup-actions{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin:12px 0;}
+.backup-list{display:grid;gap:8px;margin-top:12px;}
+.backup-item{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:12px 14px;border:1px solid var(--line);border-radius:12px;background:rgba(7,14,27,.8);}
+.backup-meta{display:flex;flex-direction:column;gap:3px;}
+.backup-name{font-weight:800;color:var(--text);}
+.backup-date{font-size:12px;color:var(--text-dim);}
+.backup-buttons{display:flex;gap:6px;flex-wrap:wrap;}
+.danger{border-color:#ff3658!important;color:#fff!important;background:linear-gradient(135deg,#8d1028,#ef2346)!important;}
+@media(max-width:600px){.backup-item{align-items:flex-start;flex-direction:column}.backup-buttons{width:100%}.backup-buttons .btn{flex:1}}
+
 </style>
 </head>
 <body>
@@ -353,6 +366,15 @@ footer{color:#6f7e96;text-transform:uppercase;letter-spacing:1px;}
     <div class="panel">
       <h2>Fáze 1 — Každý s každým</h2>
       <p class="sub">Rozpis je poskládaný tak, aby žádný hráč neměl 3 zápasy za sebou v řadě. Klikněte na vítěze každého zápasu.</p>
+      <div class="panel backup-panel">
+        <h2>💾 Zálohy výsledků &amp; reset</h2>
+        <p class="sub">Před vynulováním si ulož výsledky. Reset smaže výsledky ligy, pavouka a Panák-Beyblade, ale hráči, Beyblady a seznam sázek zůstanou.</p>
+        <div class="backup-actions">
+          <button class="btn gold" id="backupBtn">💾 Zálohovat výsledky</button>
+          <button class="btn danger" id="resetBtn">☢️ Vynulovat výsledky</button>
+        </div>
+        <div id="backupList" class="backup-list"></div>
+      </div>
       <div id="rrControls"></div>
       <div id="rrMatches"></div>
     </div>
@@ -442,7 +464,8 @@ const DEFAULT_STAKES = [
 let state = {
   players: [],
   t1: { schedule: [], playoff: null },
-  t2: { stakes: DEFAULT_STAKES.slice(), log: [] }
+  t2: { stakes: DEFAULT_STAKES.slice(), log: [] },
+  backups: []
 };
 /* ---------------- Supabase shared storage ---------------- */
 // VLOŽ SEM ÚDAJE Z TVÉHO SUPABASE PROJEKTU
@@ -472,7 +495,9 @@ function normalizeState(){
   if(!Array.isArray(state.t1.schedule)) state.t1.schedule = [];
   if(!Array.isArray(state.t2.stakes)) state.t2.stakes = DEFAULT_STAKES.slice();
   if(!Array.isArray(state.t2.log)) state.t2.log = [];
+  if(!Array.isArray(state.backups)) state.backups = [];
 }
+
 
 async function loadState(){
   try{
@@ -536,6 +561,92 @@ async function refreshSharedState(){
 }
 
 function player(id){ return state.players.find(p=>p.id===id); }
+
+/* ---------------- backups / reset ---------------- */
+function cloneResultState(){
+  return {
+    schedule: state.t1.schedule.map(m=>({id:m.id,a:m.a,b:m.b,winner:m.winner||null})),
+    playoff: state.t1.playoff ? JSON.parse(JSON.stringify(state.t1.playoff)) : null,
+    panakLog: state.t2.log.map(l=>JSON.parse(JSON.stringify(l)))
+  };
+}
+function makeBackup(label){
+  normalizeState();
+  const backup = {
+    id: uid(),
+    name: label || ('Záloha ' + new Date().toLocaleString('cs-CZ')),
+    createdAt: new Date().toISOString(),
+    data: cloneResultState()
+  };
+  state.backups.unshift(backup);
+  if(state.backups.length>20) state.backups = state.backups.slice(0,20);
+  save();
+  renderBackups();
+  return backup;
+}
+function restoreBackup(id){
+  const b = state.backups.find(x=>x.id===id);
+  if(!b || !b.data) return;
+  if(!confirm(`Obnovit zálohu „${b.name}“? Aktuální výsledky budou nahrazeny výsledky ze zálohy.`)) return;
+  state.t1.schedule = (b.data.schedule||[]).map(m=>({...m}));
+  state.t1.playoff = b.data.playoff ? JSON.parse(JSON.stringify(b.data.playoff)) : null;
+  state.t2.log = (b.data.panakLog||[]).map(l=>JSON.parse(JSON.stringify(l)));
+  save();
+  renderAll();
+  alert('Záloha obnovena. 🌀');
+}
+function deleteBackup(id){
+  const b = state.backups.find(x=>x.id===id);
+  if(!b) return;
+  if(!confirm(`Opravdu smazat zálohu „${b.name}“? Tohle nejde vrátit.`)) return;
+  state.backups = state.backups.filter(x=>x.id!==id);
+  save();
+  renderBackups();
+}
+function resetResults(){
+  const hasResults = state.t1.schedule.some(m=>m.winner) ||
+    !!(state.t1.playoff && state.t1.playoff.rounds && state.t1.playoff.rounds.some(r=>r.some(m=>m.winner))) ||
+    state.t2.log.length>0;
+  if(!hasResults){ alert('Není co vynulovat — zatím nejsou zapsané žádné výsledky.'); return; }
+  const label = prompt('Název zálohy před resetem:', 'Před resetem ' + new Date().toLocaleString('cs-CZ'));
+  if(label===null) return;
+  makeBackup(label.trim() || ('Před resetem ' + new Date().toLocaleString('cs-CZ')));
+  state.t1.schedule.forEach(m=>m.winner=null);
+  state.t1.playoff = null;
+  state.t2.log = [];
+  save();
+  renderAll();
+  alert('Výsledky jsou vynulované. Záloha zůstala uložená. 🔥');
+}
+function renderBackups(){
+  const el = document.getElementById('backupList');
+  if(!el) return;
+  if(!state.backups.length){
+    el.innerHTML = '<div class="empty">Zatím žádné zálohy. Před velkým resetem si jednu vytvoř. 💾</div>';
+    return;
+  }
+  el.innerHTML = state.backups.map(b=>`
+    <div class="backup-item">
+      <div class="backup-meta">
+        <div class="backup-name">💾 ${esc(b.name)}</div>
+        <div class="backup-date">${new Date(b.createdAt).toLocaleString('cs-CZ')} · výsledky + pavouk + Panák-Beyblade</div>
+      </div>
+      <div class="backup-buttons">
+        <button class="btn small ice" data-restore="${b.id}">↩️ Obnovit</button>
+        <button class="btn small danger" data-delete-backup="${b.id}">🗑️ Smazat</button>
+      </div>
+    </div>`).join('');
+  el.querySelectorAll('[data-restore]').forEach(btn=>btn.addEventListener('click',()=>restoreBackup(btn.dataset.restore)));
+  el.querySelectorAll('[data-delete-backup]').forEach(btn=>btn.addEventListener('click',()=>deleteBackup(btn.dataset.deleteBackup)));
+}
+
+document.getElementById('backupBtn').addEventListener('click',()=>{
+  const label = prompt('Název zálohy:', 'Záloha ' + new Date().toLocaleString('cs-CZ'));
+  if(label===null) return;
+  makeBackup(label.trim() || ('Záloha ' + new Date().toLocaleString('cs-CZ')));
+  alert('Výsledky jsou zálohované. 💾');
+});
+document.getElementById('resetBtn').addEventListener('click',resetResults);
 
 /* ---------------- tabs ---------------- */
 document.querySelectorAll('nav.tabs button').forEach(btn=>{
@@ -1061,6 +1172,7 @@ function renderAll(){
   renderPlayers();
   renderT1();
   renderT2();
+  renderBackups();
 }
 
 loadState();
